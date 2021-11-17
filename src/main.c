@@ -58,7 +58,7 @@ static void start_menu_loop(void)
             flush_input_buffer();
 
             printf("Last name: ");
-            scanf("%s", lastname);
+            scanf("%255s", lastname);
             flush_input_buffer();
 
             customer_search_record_by_name(firstname, lastname);
