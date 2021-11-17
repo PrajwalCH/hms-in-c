@@ -37,6 +37,9 @@ $(BUILD_DIR)/$(TARGET): $(OBJS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
+run:
+	./build/devin_hotel
+
 -include ($(DEPS))
 
 .PHONY: clean
