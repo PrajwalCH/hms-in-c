@@ -5,9 +5,6 @@
 
 #include "util.h"
 
-#define DATA_FILES_DIR "./data_files"
-#define DATA_FILENAME "customers.dat"
-
 static char data_file_name[] = "./data_files/customers.dat";
 static char temp_file_name[] = "./data_files/customers.dat.tmp";
 
