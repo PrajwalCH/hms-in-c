@@ -3,8 +3,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "devin_hotel.h"
 #include "util.h"
+
+#define DATA_FILES_DIR "./data_files"
+#define DATA_FILENAME "customers.dat"
+
+static void print_table_header(void)
+{
+    int num_chars_printed = printf("%-2s | %-20s | %-20s | %-20s | %-10s | %s\n", "Id", "First name", "Last name", "Address", "Ph number", "Email");
+    print_horizontal_line(num_chars_printed);
+}
 
 static void print_customer_data(struct Customer *customer)
 {
@@ -18,13 +26,13 @@ static void print_customer_data(struct Customer *customer)
 
 static const char *temp_file_name(void)
 {
-    const char *path = DATA_FILES_DIR"/"CUSTOMERS_DATA_FILENAME".temp";
+    const char *path = DATA_FILES_DIR"/"DATA_FILENAME".temp";
     return path;
 }
 
 static const char *data_file_name(void)
 {
-    const char *path = DATA_FILES_DIR"/"CUSTOMERS_DATA_FILENAME;
+    const char *path = DATA_FILES_DIR"/"DATA_FILENAME;
     return path;
 }
 
@@ -33,7 +41,7 @@ static bool open_data_file(FILE **data_file)
     *data_file = fopen(data_file_name(), "r");
 
     if (*data_file == NULL) {
-        printf("Error: customers data file '%s' not found on '%s' dir", CUSTOMERS_DATA_FILENAME, DATA_FILES_DIR);
+        printf("Error: customers data file '%s' not found on '%s' dir", DATA_FILENAME, DATA_FILES_DIR);
         return false;
     }
 
@@ -101,17 +109,6 @@ void customer_take_details(struct Customer *customer)
 {
     print_header("ADD CUSTOMER DETAILS");
 
-    /*
-     * don'use fflush(stdin) to clear the input buffer
-     * as per the c standard the behavior is undefined
-     *
-     * link:
-     * http://port70.net/~nsz/c/c11/n1570.html#7.21.5.2
-     *
-     * stackoverflow question:
-     * https://stackoverflow.com/questions/2979209/using-fflushstdin#:~:text=According%20to%20the%20C%20standard,not%20use%20fflush(stdin)%20.
-     */
-
     bool is_existing_id = false;
     do {
         flush_input_buffer();
@@ -153,7 +150,7 @@ void customer_add_new_record(struct Customer *new_customer)
     FILE *data_file = fopen(data_file_name(), "a");
 
     if (data_file == NULL) {
-        printf("Error: customers data file '%s' not found on '%s' dir\n", CUSTOMERS_DATA_FILENAME, DATA_FILES_DIR);
+        printf("Error: customers data file '%s' not found on '%s' dir\n", DATA_FILENAME, DATA_FILES_DIR);
         return;
     }
 
@@ -196,9 +193,7 @@ void customer_show_all_records(void)
     if (!open_data_file(&data_file))
         return;
 
-    int num_chars_printed = printf("%-2s | %-20s | %-20s | %-20s | %-10s | %s\n", "Id", "First name", "Last name", "Address", "Ph number", "Email");
-    print_horizontal_line(num_chars_printed);
-
+    print_table_header();
     while (fread(&customer, sizeof(struct Customer), 1, data_file) != 0) {
         print_customer_data(&customer);
     }
@@ -215,6 +210,7 @@ void customer_search_record_by_id(int id_to_lookup)
     if (!open_data_file(&data_file))
         return;
 
+    print_table_header();
     while (fread(&customer, sizeof(struct Customer), 1, data_file) != 0) {
         if (customer.id == id_to_lookup) {
             print_customer_data(&customer);
@@ -235,6 +231,7 @@ void customer_search_record_by_name(const char *firstname, const char *lastname)
     if (!open_data_file(&data_file))
         return;
 
+    print_table_header();
     while (fread(&customer, sizeof(struct Customer), 1, data_file) != 0) {
         if (strcmp(customer.firstname, firstname) == 0 && strcmp(customer.lastname, lastname) == 0) {
             print_customer_data(&customer);

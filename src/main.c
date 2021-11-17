@@ -2,9 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "devin_hotel.h"
 #include "customer.h"
-#include "room.h"
 #include "util.h"
 
 #define USERNAME_LEN 4
@@ -13,19 +11,15 @@
 static void print_main_menu(void)
 {
     print_header("MAIN MENU");
-    
-    printf("1.  Add new room info\n");
-    printf("2.  Add new customer record\n");
-    printf("3.  View Available rooms\n");
-    printf("4.  View all rooms\n");
-    printf("5.  View all customers record\n");
-    printf("6.  Reserve a room\n");
-    printf("7.  Search customer record by id\n");
-    printf("8.  Search customer record by name\n");
-    printf("9.  Update customer record\n");
-    printf("10. Delete customer record\n");
-    printf("11. Delete all customers record\n");
-    printf("12. Logout\n");
+
+    printf("1. Add new customer record\n");
+    printf("2. View all customers record\n");
+    printf("3. Search customer record by id\n");
+    printf("4. Search customer record by name\n");
+    printf("5. Update customer record\n");
+    printf("6. Delete customer record\n");
+    printf("7. Delete all customers record\n");
+    printf("8. Logout\n");
 }
 
 static void start_menu_loop(void)
@@ -40,37 +34,22 @@ static void start_menu_loop(void)
 
         switch (user_choosed_opt) {
         case 1: {
-            struct Room new_room = room_new();
-            room_take_info(&new_room);
-            room_add_new_record(&new_room);
-            break;
-        }
-        case 2: {
             struct Customer new_customer = customer_New();
             customer_take_details(&new_customer);
             customer_add_new_record(&new_customer);
             break;
         }
-        case 3:
-            room_show_available_rooms();
-            break;
-        case 4:
-            room_show_all_rooms();
-            break;
-        case 5:
+        case 2:
             customer_show_all_records();
             break;
-        case 6:
-            room_reserve();
-            break;
-        case 7: {
+        case 3: {
             int customer_id = 0;
             printf("Customer id: ");
             scanf("%d", &customer_id);
             customer_search_record_by_id(customer_id);
             break;
         }
-        case 8: {
+        case 4: {
             char firstname[256] = {0};
             char lastname[256] = {0};
 
@@ -85,24 +64,24 @@ static void start_menu_loop(void)
             customer_search_record_by_name(firstname, lastname);
             break;
         }
-        case 9: {
+        case 5: {
             int customer_id = 0;
             printf("Customer id: ");
             scanf("%d", &customer_id);
             customer_update_record(customer_id);
             break;
         }
-        case 10: {
+        case 6: {
             int customer_id = 0;
             printf("Customer id: ");
             scanf("%d", &customer_id);
             customer_delete_record(customer_id);
             break;
         }
-        case 11:
+        case 7:
             customer_delete_all_records();
             break;
-        case 12:
+        case 8:
             exit_program = true;
             break;
         default:
@@ -151,7 +130,7 @@ int main(void)
         printf("remaining chances: %d\n", remaining_chances);
 
         if (!authenticate_user()) {
-            LOG_ERR("Incorrect username or password\n");
+            printf("Error: Incorrect username or password\n\n");
         } else {
             break;
         }
