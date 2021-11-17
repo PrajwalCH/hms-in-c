@@ -8,6 +8,9 @@
 #define DATA_FILES_DIR "./data_files"
 #define DATA_FILENAME "customers.dat"
 
+static char data_file_name[] = "./data_files/customers.dat";
+static char temp_file_name[] = "./data_files/customers.dat.tmp";
+
 static void print_table_header(void)
 {
     int num_chars_printed = printf("%-2s | %-20s | %-20s | %-20s | %-10s | %s\n", "Id", "First name", "Last name", "Address", "Ph number", "Email");
@@ -24,24 +27,12 @@ static void print_customer_data(struct Customer *customer)
     printf("%s |\n", customer->email);
 }
 
-static const char *temp_file_name(void)
-{
-    const char *path = DATA_FILES_DIR"/"DATA_FILENAME".temp";
-    return path;
-}
-
-static const char *data_file_name(void)
-{
-    const char *path = DATA_FILES_DIR"/"DATA_FILENAME;
-    return path;
-}
-
 static bool open_data_file(FILE **data_file)
 {
-    *data_file = fopen(data_file_name(), "r");
+    *data_file = fopen(data_file_name, "r");
 
     if (*data_file == NULL) {
-        printf("Error: customers data file '%s' not found on '%s' dir", DATA_FILENAME, DATA_FILES_DIR);
+        printf("Error: customers data file '%s' not found", data_file_name);
         return false;
     }
 
@@ -63,7 +54,7 @@ static bool modify_data_file(int id, CallbackFn cb)
     if (!open_data_file(&data_file))
         return false;
 
-    temp_file = fopen(temp_file_name(), "w");
+    temp_file = fopen(temp_file_name, "w");
     if (temp_file == NULL) {
         printf("Error: failed to create or open temp file\n");
         return false;
@@ -82,8 +73,8 @@ static bool modify_data_file(int id, CallbackFn cb)
     fclose(data_file);
     fclose(temp_file);
 
-    remove(data_file_name());
-    rename(temp_file_name(), data_file_name());
+    remove(data_file_name);
+    rename(temp_file_name, data_file_name);
 
     if (!has_record) {
         printf("customer with id '%d' not found on records\n", id);
@@ -147,10 +138,10 @@ void customer_take_details(struct Customer *customer)
 
 void customer_add_new_record(struct Customer *new_customer)
 {
-    FILE *data_file = fopen(data_file_name(), "a");
+    FILE *data_file = fopen(data_file_name, "a");
 
     if (data_file == NULL) {
-        printf("Error: customers data file '%s' not found on '%s' dir\n", DATA_FILENAME, DATA_FILES_DIR);
+        printf("Error: customers data file '%s' not found\n", data_file_name);
         return;
     }
 
@@ -163,7 +154,7 @@ void customer_add_new_record(struct Customer *new_customer)
 bool customer_is_record_exist(int id_to_lookup)
 {
     struct Customer customer = customer_New();
-    FILE *data_file = fopen(data_file_name(), "r");
+    FILE *data_file = fopen(data_file_name, "r");
 
     if (data_file == NULL)
         return false;
@@ -278,12 +269,12 @@ void customer_delete_record(int id_to_delete)
 
 void customer_delete_all_records(void)
 {
-    if (remove(data_file_name()) == -1) {
+    if (remove(data_file_name) == -1) {
         printf("Error: failed to delete all records\n");
         return;
     }
 
-    FILE *new_data_file = fopen(data_file_name(), "w");
+    FILE *new_data_file = fopen(data_file_name, "w");
 
     if (new_data_file == NULL) {
         printf("Error: failed to create new data file\n");
